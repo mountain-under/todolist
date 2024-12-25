@@ -1,0 +1,51 @@
+# Docker Composeファイル：複数のサービスを定義し、それらを統合して動作させる
+
+services:
+  # フロントエンドサービス
+  frontend:
+    build:
+      context: ./frontend # フロントエンド用のDockerfileが配置されているディレクトリ
+    ports:
+      - "3000:3000" # ホストの3000番ポートをコンテナの3000番ポートにマッピング
+    volumes:
+      - ./frontend:/app # ローカルのfrontendディレクトリをコンテナ内の/appにマウント
+      - node_modules:/app/node_modules # node_modulesをボリュームとして扱い、依存関係を保持
+    stdin_open: true # コンテナの標準入力を開いたままにする
+    tty: true # コンテナに疑似ターミナルを割り当てる
+    depends_on:
+      - backend # backendサービスが先に起動している必要がある
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000 # フロントエンドからバックエンドへのAPI呼び出しURL
+      - CHOKIDAR_USEPOLLING=true # ファイル変更監視を有効にする環境変数（ホットリロード用）
+
+  # バックエンドサービス
+  backend:
+    build:
+      context: ./backend # バックエンド用のDockerfileが配置されているディレクトリ
+    ports:
+      - "5000:5000" # ホストの5000番ポートをコンテナの5000番ポートにマッピング
+    volumes:
+      - ./backend:/app # ローカルのbackendディレクトリをコンテナ内の/appにマウント
+    depends_on:
+      - db # dbサービスが先に起動している必要がある
+    environment:
+      - DATABASE_URL=mysql://user:password@db:3306/todo_db # MySQLデータベースへの接続情報
+
+  # データベースサービス
+  db:
+    image: mysql:8.0 # 使用するMySQLのバージョン
+    ports:
+      - "3306:3306" # ホストの3306番ポートをコンテナの3306番ポートにマッピング
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword # MySQLのルートユーザーのパスワード
+      MYSQL_DATABASE: todo_db # 初期化時に作成するデータベース名
+      MYSQL_USER: user # アプリケーションが使用するユーザー名
+      MYSQL_PASSWORD: password # アプリケーションが使用するユーザーパスワード
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql # 初期化スクリプトをコンテナにマウント
+      - db_data:/var/lib/mysql # MySQLのデータを永続化するためのボリューム
+
+# 定義されたボリューム
+volumes:
+  db_data: # データベースデータ用のボリューム
+  node_modules: # フロントエンドの依存関係用のボリューム

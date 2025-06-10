@@ -18,6 +18,8 @@ class Todo(db.Model):
     title = db.Column(db.String(200), nullable=False)
     # タスクの詳細（500文字以内、必須ではない）
     details = db.Column(db.String(500), nullable=True)
+    # 締め切り日（オプション）
+    due_date = db.Column(db.Date, nullable=True)
     # タスクの完了状態（デフォルトは未完了）
     completed = db.Column(db.Boolean, default=False)
     # ユーザーID（外部キーとしてUserモデルのIDを参照）

@@ -1,5 +1,6 @@
 # FlaskのBlueprintをインポートしてルート管理を分離
 from flask import Blueprint, request, jsonify
+from datetime import datetime
 # モデルをインポート（UserとTodo）
 from .models import User, Todo
 # データベース操作用のインスタンスをインポート
@@ -43,7 +44,8 @@ def todos():
                 'id': todo.id,
                 'title': todo.title,
                 'details': todo.details,  # 詳細情報を含める
-                'completed': todo.completed
+                'completed': todo.completed,
+                'due_date': todo.due_date.isoformat() if todo.due_date else None
             } for todo in todos
         ])
     elif request.method == 'POST':  # 新しいタスクの作成
@@ -51,6 +53,7 @@ def todos():
         new_todo = Todo(
             title=data['title'],  # タスクのタイトル
             details=data.get('details'),  # タスクの詳細（オプション）
+            due_date=datetime.strptime(data['due_date'], '%Y-%m-%d').date() if data.get('due_date') else None,
             user_id=data['user_id']  # ユーザーID
         )
         db.session.add(new_todo)
@@ -71,6 +74,8 @@ def update_or_delete_todo(todo_id):
             todo.title = data['title']  # タイトルを更新
         if 'details' in data:
             todo.details = data['details']  # 詳細を更新
+        if 'due_date' in data:
+            todo.due_date = datetime.strptime(data['due_date'], '%Y-%m-%d').date() if data['due_date'] else None
         if 'completed' in data:
             todo.completed = data['completed']  # 完了状態を更新
         db.session.commit()  # 変更を保存

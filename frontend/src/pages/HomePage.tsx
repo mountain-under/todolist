@@ -13,6 +13,8 @@ const HomePage: React.FC = () => {
   const [task, setTask] = useState(""); // 初期値は空文字
   // ユーザーが入力した詳細情報を管理するstate
   const [details, setDetails] = useState(""); // 初期値は空文字
+  // ユーザーが入力した締め切り日を管理するstate
+  const [dueDate, setDueDate] = useState(""); // 初期値は空文字
   // 入力エラー時のメッセージを管理するstate
   const [error, setError] = useState(""); // 初期値は空文字
   // ページ遷移用のフック
@@ -41,12 +43,14 @@ const HomePage: React.FC = () => {
       await axios.post(`${process.env.REACT_APP_API_URL}/todos`, {
         title: task, // タスク名
         details: details, // 詳細情報
+        due_date: dueDate || null, // 締め切り日
         user_id: parseInt(userId), // ユーザーID（文字列を整数に変換）
       });
 
       // 入力フィールドをリセット
       setTask(""); // タスク名を空にする
       setDetails(""); // 詳細を空にする
+      setDueDate(""); // 締め切り日を空にする
       navigate("/list"); // タスク一覧ページに遷移
     } catch (err) {
       console.error("Failed to add task"); // タスク追加失敗時のエラー出力
@@ -87,6 +91,17 @@ const HomePage: React.FC = () => {
           margin="normal" // マージン設定
         />
 
+        {/* 締め切り日入力フィールド */}
+        <TextField
+          label="締め切り日"
+          type="date"
+          InputLabelProps={{ shrink: true }}
+          fullWidth
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+          margin="normal"
+        />
+
         {/* タスク追加ボタン */}
         <Box mt={2}> {/* 上部にマージンを追加 */}
           <Button type="submit" variant="contained" color="primary" fullWidth>
@@ -103,6 +118,17 @@ const HomePage: React.FC = () => {
             onClick={() => navigate("/list")} // ボタン押下時にタスク一覧ページへ遷移
           >
             タスク一覧へ
+          </Button>
+        </Box>
+        {/* カレンダーページへの遷移ボタン */}
+        <Box mt={2}>
+          <Button
+            variant="outlined"
+            color="secondary"
+            fullWidth
+            onClick={() => navigate("/calendar")}
+          >
+            カレンダーへ
           </Button>
         </Box>
       </form>

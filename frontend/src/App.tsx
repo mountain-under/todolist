@@ -9,6 +9,7 @@ import SignUpPage from "./pages/SignUpPage"; // サインアップページ
 import HomePage from "./pages/HomePage"; // ホームページ
 import ListPage from "./pages/ListPage"; // タスクリストページ
 import EditPage from "./pages/EditPage"; // タスク編集ページ
+import CalendarPage from "./pages/CalendarPage"; // カレンダーページ
 
 // アプリケーション全体を管理するコンポーネント
 const App: React.FC = () => {
@@ -23,6 +24,7 @@ const App: React.FC = () => {
         <Route path="/home" element={<HomePage />} /> {/* ホームページ */}
         <Route path="/list" element={<ListPage />} /> {/* タスクリストページ */}
         <Route path="/edit" element={<EditPage />} /> {/* タスク編集ページ */}
+        <Route path="/calendar" element={<CalendarPage />} /> {/* カレンダーページ */}
       </Routes>
     </Router>
   );

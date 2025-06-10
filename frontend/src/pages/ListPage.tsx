@@ -24,6 +24,7 @@ interface Todo {
   id: number; // タスクを一意に識別するID
   title: string; // タスクの名前
   details: string | null; // タスクの詳細情報（文字列またはnullを許容）
+  due_date: string | null; // 締め切り日
   completed: boolean; // タスクが完了しているかどうかを示すフラグ
 }
 
@@ -187,6 +188,11 @@ const ListPage: React.FC = () => {
                 {todo.details && ( /* 詳細情報が存在する場合のみ表示 */
                   <Typography variant="body2" color="textSecondary">
                     {todo.details} {/* タスクの詳細情報 */}
+                  </Typography>
+                )}
+                {todo.due_date && (
+                  <Typography variant="body2" color="textSecondary">
+                    期限: {todo.due_date}
                   </Typography>
                 )}
               </Box>

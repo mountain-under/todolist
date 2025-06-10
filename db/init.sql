@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS todo (
     id INT AUTO_INCREMENT PRIMARY KEY, -- タスクID（自動増加）
     title VARCHAR(200) NOT NULL, -- タスクのタイトル（必須）
     details VARCHAR(500), -- タスクの詳細（オプション）
+    due_date DATE, -- 締め切り日（オプション）
     completed BOOLEAN DEFAULT FALSE, -- タスクの完了状態（デフォルトは未完了）
     user_id INT NOT NULL, -- ユーザーID（外部キー）
     FOREIGN KEY (user_id) REFERENCES user(id) -- 外部キー制約（ユーザーテーブルのIDを参照）
